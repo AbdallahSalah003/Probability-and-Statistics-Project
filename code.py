@@ -179,3 +179,45 @@ plt.ylabel('Frequency')
 plt.title('Loser and Winner Penalty kicks attempted in EPL')
 
 
+#compare betwwen possesstion % and winning 
+possession = [[] for i in range(100)]
+for ind in df9.index:
+    if(df9['result'][ind]=='W'): possession[df9['poss'][ind].astype(int)].append([df9['gf'][ind]-df9['ga'][ind]])
+
+possession2 = [[] for i in range(100)]
+for ind in range(len(possession)):
+    sum = 0
+    for ind2 in range(len(possession[ind])):
+        sum=sum+possession[ind][ind2][0];
+    if(len(possession[ind])>0): 
+        possession2[ind]=round(sum/len(possession[ind]),2)
+
+posss = []
+margins = []
+for ind in range(len(possession2)):
+    if possession2[ind]:
+        posss.append(ind)
+        margins.append(possession2[ind])
+corr_coef = np.corrcoef(margins, posss)
+
+
+#red cards vs winning 
+rc = []
+margins2 = []
+for ind in df.index:
+    if(df['FTR'][ind]=='H'): 
+        rc.append(df['HR'][ind])
+        margins2.append(df['FTHG'][ind]-df['FTAG'][ind])
+    elif( df['FTR'][ind]=='A' ):
+        rc.append(df['AR'][ind])
+        margins2.append(df['FTAG'][ind]-df['FTHG'][ind])
+import matplotlib.pyplot as plt
+plt.scatter(rc,margins2)
+plt.xlabel('Red Cards')
+plt.ylabel('Margin of Vectory')
+plt.title('Winning VS #Red Cards')
+plt.show()
+from scipy.stats import pearsonr
+ans = pearsonr(rc, margins2)
+print("Pearson correlation coefficient:", ans)
+
